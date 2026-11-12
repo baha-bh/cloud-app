@@ -3,28 +3,19 @@ version: 0.2
 phases:
   install:
     runtime-versions:
-      python: 3.10
-    commands:
-      - echo "=== Installing dependencies ==="
-      - python -m pip install --upgrade pip
-      - pip install -r requirements.txt
-      - pip install pytest
-
+      python: 3.11
   pre_build:
     commands:
-      - echo "=== Running unit tests ==="
-      - pytest
-      - echo "=== Logging in to Amazon ECR ==="
-      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
-
+      - echo Logging in to Amazon ECR...
+      - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 552738071495.dkr.ecr.us-east-1.amazonaws.com
   build:
     commands:
-      - echo "=== Building Docker image ==="
-      - docker build -t cloud-app:latest .
-      - docker tag cloud-app:latest $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/cloud-app:latest
-
+      - echo Build started on `date`
+      - echo Building the Docker image...
+      - docker build -t cloud-app .
+      - docker tag cloud-app:latest 552738071495.dkr.ecr.us-east-1.amazonaws.com/cloud-app:latest
   post_build:
     commands:
-      - echo "=== Pushing Docker image to ECR ==="
-      - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/cloud-app:latest
-      - echo "=== Build and Push completed successfully ==="
+      - echo Build completed on `date`
+      - echo Pushing the Docker image...
+      - docker push 552738071495.dkr.ecr.us-east-1.amazonaws.com/cloud-app:latest
